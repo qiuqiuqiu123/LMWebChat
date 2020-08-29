@@ -61,80 +61,114 @@
             var layer = layui.layer;
         })
         $(function () {
-            // // 页面初始化生成验证码
-            // window.onload = createCode('#loginCode');
-            // // 验证码切换
-            // $('#loginCode').click(function () {
-            //     createCode('#loginCode');
-            // });
-            // 登陆事件
             $('#loginBtn').click(function () {
-                login();
+				if(!validateLogin()){
+					
+				} else {
+					login();
+				}
             });
+			
             // 注册事件
             $('#loginRegister').click(function () {
-                register();
+				register();
+				
             });
 			
 			$('#findPassword').click(function(){
 				findPassword();
 			})
+			
+			
         });
-  //       // 生成验证码
-  //       function createCode(codeID) {
-  //           var code = "";
-  //           // 验证码长度
-  //           var codeLength = 4;
-  //           // 验证码dom元素
-  //           var checkCode = $(codeID);
-  //           // 验证码随机数
-  //           var random = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R',
-  //               'S','T','U','V','W','X','Y','Z'];
-  //           for (var i = 0;i < codeLength; i++){
-  //               // 随机数索引
-  //               var index = Math.floor(Math.random()*36);
-  //               code += random[index];
-  //           }
-  //           // 将生成的随机验证码赋值
-  //           checkCode.val(code);
-  //       }
-  //       // 校验验证码、用户名、密码
-		// //inputID,codeID
-  //       function validateCode() {
-  //           // var inputCode = $(inputID).val().toUpperCase();
-  //           // var cardCode = $(codeID).val();
-  //           var loginUsername = $('#loginUsername').val();
-		// 	console.log(loginUsername);
-  //           var loginPassword = $('#loginPassword').val();
-  //           if ($.trim(loginUsername) == '' || $.trim(loginUsername).length<=0){
-  //               layer.alert("用户名不能为空");
-  //               return false;
-  //           }
-  //           if ($.trim(loginPassword) == '' || $.trim(loginPassword).length<=0){
-  //               layer.alert("密码不能为空");
-  //               return false;
-  //           }
-  //           // if (inputCode.length<=0){
-  //           //     layer.alert("验证码不能为空");
-  //           //     return false;
-  //           // }
-  //           // if (inputCode != cardCode){
-  //           //     layer.alert("请输入正确验证码");
-  //           //     return false;
-  //           // }
-  //           return true;
-  //       }
+		
+		function initRegister(){
+			$('#registerNickname').val('');
+			$('#registerUsername').val('');
+			$('#registerEmail').val('');
+			$('#registerCheckCode').val('');
+			$('#registerPassword').val('');
+			$('#registerWellPassword').val('');
+		}
+		
+		function initfindPassword(){
+			$('#findPasswordEmail').val('');
+			$('#findPasswordCheckCode').val('');
+			$('#findPasswordPassword').val('');
+		}
+		
+		function validateLogin() {
+            var loginUsername = $('#loginUsername').val();
+            var loginPassword = $('#loginPassword').val();
+            if ($.trim(loginUsername) == '' || $.trim(loginUsername).length<=0){
+                layer.alert("用户名不能为空");
+                return false;
+            }
+            if ($.trim(loginPassword) == '' || $.trim(loginPassword).length<=0){
+                layer.alert("密码不能为空");
+                return false;
+            }
+            return true;
+        }
+		
+		function validateRegister(){
+			var registerNickname = $('#registerNickname').val();
+			var registerUsername = $('#registerUsername').val();
+			var registerEmail = $('#registerEmail').val();
+			var registerCheckCode = $('#registerCheckCode').val();
+			var registerPassword = $('#registerPassword').val();
+			var registerWellPassword = $('#registerWellPassword').val();
+			if ($.trim(registerNickname) == '' || $.trim(registerNickname).length<=0){
+			    layer.alert("昵称不能为空");
+			    return false;
+			}
+			if ($.trim(registerUsername) == '' || $.trim(registerUsername).length<=0){
+			    layer.alert("用户名不能为空");
+			    return false;
+			}
+			if ($.trim(registerEmail) == '' || $.trim(registerEmail).length<=0){
+			    layer.alert("邮箱不能为空");
+			    return false;
+			}
+			if ($.trim(registerCheckCode) == '' || $.trim(registerCheckCode).length<=0){
+			    layer.alert("验证码不能为空");
+			    return false;
+			}
+			if ($.trim(registerPassword) == '' || $.trim(registerPassword).length<=0){
+			    layer.alert("密码不能为空");
+			    return false;
+			}
+			if ($.trim(registerWellPassword) != $.trim(registerPassword)){
+			    layer.alert("密码输入不一致");
+			    return false;
+			}
+			return true;
+		}
+		
+		function validateFindPassword(){
+			var findPasswordEmail = $('#findPasswordEmail').val();
+			var findPasswordCheckCode = $('#findPasswordCheckCode').val();
+			var findPasswordPassword = $('#findPasswordPassword').val();
+			if ($.trim(findPasswordEmail) == '' || $.trim(findPasswordEmail).length<=0){
+			    layer.alert("邮箱不能为空");
+			    return false;
+			}
+			if ($.trim(findPasswordCheckCode) == '' || $.trim(findPasswordCheckCode).length<=0){
+			    layer.alert("验证码不能为空");
+			    return false;
+			}
+			if ($.trim(findPasswordPassword) == '' || $.trim(findPasswordPassword).length<=0){
+			    layer.alert("密码不能为空");
+			    return false;
+			}
+			return true;
+		}
+		
+		
+		
         // 登录流程
         function login() {
-			//'#loginCard','#loginCode'
-			var loginUsername = $('#loginUsername').val();
-			console.log(loginUsername);
-			var loginPassword = $('#loginPassword').val();
-			var params = {};
-			params.loginUsername = loginUsername;
-			params.loginPassword = loginPassword;
 			var loginLoadIndex = layer.load(2);
-			console.log($('.loginForm form').serialize());
 			$('#loginBtn').val("正在登录...");
 			$.ajax({
 				type:'post',
@@ -144,60 +178,112 @@
 				contentType:'application/x-www-form-urlencoded',
 				success:function (data) {
 					layer.close(loginLoadIndex);
-					alert(data.msg.toString());
 					console.log(data);
-					//var jsonData = JSON.parse(data);
-					//console.log(jsonData);
-					//获取成功之后 跳转界面
-					//if (jsonData.code == 'xxx'){
-						//window.location.href = '';//跳转本地界面的url
-						//测试用
-						//alert('1');
-					//}
+					if(data.code == 200){
+						//window.location.href = './index.html';//跳转本地界面的url
+					}else{
+						layer.alert('用户名或者密码错误');
+					}
 				},
 				error:function () {
 					layer.close(loginLoadIndex);
-					alert(data.msg.toString());
 					$('#loginBtn').val("登录");
+					
 				}
 			});
 		}
+		
+		//发送验证码
+		function sendCode(index,btn){
+			var count = 60;
+			var email = '';
+			if(index == 0){
+				email = $('#registerEmail').val();
+			}else if(index == 1){
+				email = $('#findPasswordEmail').val();
+			}
+			console.log(email);
+			var formData = new FormData();
+			formData.append("email",email);
+			$.ajax({
+			    type:'post',
+			    url:URL+'user/verify_code',
+			    dataType:'json',
+			    data:formData,
+			    processData: false,   // jQuery不要去处理发送的数据
+			    contentType: false, 
+			    success:function (data) {
+					console.log(data);
+					if(data.code == 200){
+						layer.alert(data.msg);
+						settime(btn,count);
+					}else{
+						alert(data.msg);
+					}
+			    },
+			    error:function () {
+			        layer.alert("请检查网络连接！");
+			    }
+			});
+		}
+		
+		function settime(btn,count){
+			
+			if (count == 0) {
+			    btn.removeAttribute("disabled");
+			    btn.innerText="获取验证码";
+			    count = 60;                     
+			    return false;
+			} else {
+			    btn.setAttribute("disabled", true);
+			    btn.innerText="重新发送(" + count + ")";
+			    count--;
+			}
+			setTimeout(function() {   //设置一个定时器，每秒刷新一次
+			    settime(btn,count);
+			},1000);
+		}
+		
         // 注册流程
         function register() {
             layer.open({
                 type:'1',
+				scrollbar:false,
                 content:$('.registerPage'),
                 title:'注册',
-                area:['500px','500px'],
+                area:['450px','500px'],
+				resize:false,
                 btn:['注册','取消'],
                 closeBtn:'1',
                 btn1:function (index,layero) {
-                    //注册回调
-                    layer.close(index);
-                    var registerUsername = $('#registerUsername').val();
-                    var registerPassword = $('#registerPassword').val();
-                    var registerWellPassword = $('#registerWellPassword').val();
-                    var params = {};
-                    params.registerUsername = registerUsername;
-                    params.registerPassword = registerPassword;
-                    params.registerWellPassword = registerWellPassword;
-                    var registerLoadIndex = layer.load(2);
-                    
-					$.ajax({
-                        type:'post',
-                        url:URL+'user/rigister',
-                        dataType:'json',
-                        data:JSON.stringify(params),
-                        contentType:'application/json',
-                        success:function (data) {
-                            layer.close(registerLoadIndex);
-                            layer.msg(data);
-                        },
-                        error:function () {
-                            layer.close(registerLoadIndex);
-                            layer.alert("请求超时！")
-                        }
-                    });
+					if(!validateRegister()){	
+					}else{
+						//注册回调
+						layer.close(index);
+						var registerLoadIndex = layer.load(2);	
+						//console.log($('.registerDiv form').serialize());
+						$.ajax({
+						    type:'post',
+						    url:URL+'user/sign_up',
+						    dataType:'json',
+						    data:$('.registerDiv form').serialize(),
+						    contentType:'application/x-www-form-urlencoded',
+						    success:function (data) {
+								console.log(data);
+								if(data.code == 200){
+									layer.close(registerLoadIndex);
+									initRegister();
+								}else{
+									layer.alert("请检查格式是否符合规范");
+								}
+						    },
+						    error:function () {
+						        layer.close(registerLoadIndex);
+						        layer.alert("请检查网络连接！");
+								initRegister();
+						    }
+						});
+					}
                 },
                 btn2:function (index,layero) {
                     //取消回调
@@ -213,16 +299,36 @@
 			    area:'500px',
 			    btn:['确定','取消'],
 			    closeBtn:'1',
+				resize:false,
 			    btn1:function (index,layero) {
 			        //忘记密码回调
-			        layer.close(index);
-					var findPasswordEmail = $('#findPasswordEmail').val();
-					var params = {};
-					params.findPasswordEmail = findPasswordEmail;
-			        var findPasswordLoadIndex = layer.load(2);
-					$.ajax({
-						//后端回调
-					})
+					if(!validateFindPassword()){	
+					}else{
+						layer.close(index);
+						var findPasswordLoadIndex = layer.load(2);	
+						//console.log($('.findPasswordDiv form').serialize());
+						$.ajax({
+						    type:'post',
+						    url:URL+'user/new_password',
+						    dataType:'json',
+						    data:$('.findPasswordDiv form').serialize(),
+						    contentType:'application/x-www-form-urlencoded',
+						    success:function (data) {
+								console.log(data);
+								if(data.code == 200){
+									layer.close(findPasswordLoadIndex);
+									initfindPassword();
+								}else{
+									layer.alert("请检查格式是否符合规范");
+								}
+						    },
+						    error:function () {
+						        layer.close(findPasswordLoadIndex);
+						        layer.alert("请检查网络连接！")
+								initfindPassword();
+						    }
+						});
+					}
 			    },
 			    btn2:function (index,layero) {
 			        //取消回调
@@ -232,11 +338,20 @@
     </script>
 
 	</body>
-
+	
 	<div class="registerPage">
 		<div class="registerDiv">
 			<form>
-				<div class="usernameWrapDiv">
+				<div class="registerWrapDiv">
+					<div class="registerLable">
+						<label>昵称:</label>
+					</div>
+					<div class="nicknameDiv">
+						<i class="layui-icon layui-icon-username adminIcon"></i>
+						<input id="registerNickname" class="layui-input adminInput" type="text" name="name" placeholder="输入昵称">
+					</div>
+				</div>
+				<div class="registerWrapDiv">
 					<div class="usernameLabel">
 						<label>用户名:</label>
 					</div>
@@ -245,7 +360,28 @@
 						<input id="registerUsername" class="layui-input adminInput" type="text" name="username" placeholder="输入用户名">
 					</div>
 				</div>
-				<div class="usernameWrapDiv">
+				<div class="registerWrapDiv">
+					<div class="usernameLabel">
+						<label>邮箱:</label>
+					</div>
+					<div class="emailDiv">
+						<i class="layui-icon layui-icon-username adminIcon"></i>
+						<input id="registerEmail" class="layui-input adminInput" type="text" name="email" placeholder="输入邮箱">
+					</div>
+				</div>
+				
+				<div class="registerWrapDiv">
+					<div class="usernameLabel">
+						<label>验证码:</label>
+					</div>
+					<div class="checkCodeDiv">
+						<i class="layui-icon layui-icon-username adminIcon"></i>
+						<input id="registerCheckCode" class="layui-input checkCodeInput" type="text" name="code" placeholder="输入验证码">
+						<button id="sendCodeBtn" type="button" onclick="sendCode(0,this)" class="layui-btn layui-btn-normal checkCodeBtn">获取验证码</button>
+					</div>
+				</div>
+				
+				<div class="registerWrapDiv">
 					<div class="usernameLabel">
 						<label>密码:</label>
 					</div>
@@ -254,43 +390,51 @@
 						<input id="registerPassword" class="layui-input adminInput" type="password" name="password" placeholder="输入密码">
 					</div>
 				</div>
-				<div class="usernameWrapDiv">
+				<div class="registerWrapDiv">
 					<div class="usernameLabel">
 						<label>确认密码:</label>
 					</div>
 					<div class="passwordDiv">
 						<i class="layui-icon layui-icon-password adminIcon"></i>
-						<input id="registerWellPassword" class="layui-input adminInput" type="password" name="password" placeholder="输入密码">
+						<input id="registerWellPassword" class="layui-input adminInput" type="password" placeholder="输入密码">
 					</div>
 				</div>
-				<!-- <div class="usernameWrapDiv">
-					<div class="usernameLabel">
-						<label>角色类型:</label>
-					</div>
-					<div class="passwordDiv">
-						<select id="roleSelect" class="layui-select">
-							<option value="">请选择...</option>
-							<option value="0">经纪人</option>
-							<option value="1">房东</option>
-						</select>
-					</div>
-				</div> -->
 			</form>
 		</div>
 	</div>
+	
+	
 	<div class="findPasswordPage">
-		<div class="registerDiv">
+		<div class="findPasswordDiv">
 			<form>
 				<div class="usernameWrapDiv">
 					<div class="usernameLabel">
 						<label>邮箱:</label>
 					</div>
-					<div class="usernameDiv">
+					<div class="emailDiv">
 						<i class="layui-icon layui-icon-username adminIcon"></i>
 						<input id="findPasswordEmail" class="layui-input adminInput" type="text" name="email" placeholder="输入邮箱">
 					</div>
 				</div>
-
+				<div class="usernameWrapDiv">
+					<div class="usernameLabel">
+						<label>验证码:</label>
+					</div>
+					<div class="checkCodeDiv">
+						<i class="layui-icon layui-icon-username adminIcon"></i>
+						<input id="findPasswordCheckCode" class="layui-input checkCodeInput" type="text" name="code" placeholder="输入验证码">
+						<button id="findPasswodSendCodeBtn" onclick="sendCode(1,this)" type="button" class="layui-btn layui-btn-normal checkCodeBtn">获取验证码</button>
+					</div>
+				</div>
+				<div class="usernameWrapDiv">
+					<div class="usernameLabel">
+						<label>新密码:</label>
+					</div>
+					<div class="passwordDiv">
+						<i class="layui-icon layui-icon-password adminIcon"></i>
+						<input id="findPasswordPassword" class="layui-input adminInput" type="password" name="password" placeholder="输入新密码">
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
