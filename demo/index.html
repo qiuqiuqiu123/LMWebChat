@@ -332,14 +332,20 @@
 
 				}
 				//监听查看群员
+<<<<<<< HEAD
 				layim.on('members', function(res) {
 					console.log(res);
 					checkGroupMembers(res.data);
+=======
+				layim.on('members', function(data) {
+					checkGroupMembers(data)
+>>>>>>> a1021f9eb3e87822b74919af88eb25c4db95989e
 				});
 
 				//监听聊天窗口的切换
 				layim.on('chatChange', function(res) {
 					var type = res.data.type;
+					layimChangeTo = res.data;
 					console.log(res.data)
 					if (type === 'friend') {
 						//模拟标注好友状态
