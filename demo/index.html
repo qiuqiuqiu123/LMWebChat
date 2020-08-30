@@ -275,9 +275,8 @@
 				});
 
 				function checkGroupMembers(res) {
-
-					var groupId = layimChangeTo.id;
-					console.log(res);
+					var groupId = res.id;
+					console.log('res:' +res);
 					console.log(groupId)
 
 					var membersList = $(".layim-members-list");
@@ -333,8 +332,9 @@
 
 				}
 				//监听查看群员
-				layim.on('members', function(data) {
-					checkGroupMembers(res)
+				layim.on('members', function(res) {
+					console.log(res);
+					checkGroupMembers(res.data);
 				});
 
 				//监听聊天窗口的切换
