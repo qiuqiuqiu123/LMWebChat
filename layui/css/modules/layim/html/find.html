@@ -36,7 +36,8 @@
 
 		<script src="../../../../layui.js"></script>
 		<script>
-			var path='https://pope.utools.club'
+			var path='https://qiuqiuqiu.utools.club';
+			var userId = sessionStorage.getItem('id');
 			layui.use(['layim', 'laypage','layer'], function() {
 				var layim = layui.layim,
 						layer = layui.layer,
@@ -79,7 +80,7 @@
 												type: "POST",
 												url: path + '/friendship/makeFriend',
 												data: {
-													userId: 1,
+													userId: userId,
 													friendId: id
 												},
 												async: true,
