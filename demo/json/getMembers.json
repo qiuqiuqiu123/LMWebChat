@@ -2,23 +2,6 @@
   "code": 0
   ,"msg": ""
   ,"data": {
-    "owner": {
-      "username": "user1"
-      ,"id": "123456"
-      ,"avatar": "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg"
-      ,"sign": "这些都是测试数据，实际使用请严格按照该格式返回"
-    }
-    ,"members": 2
-    ,"list": [{
-      "username": "user1"
-      ,"id": "123456"
-      ,"avatar": "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg"
-      ,"sign": "这些都是测试数据，实际使用请严格按照该格式返回"
-    },{
-      "username": "user2"
-      ,"id": "234567"
-      ,"avatar": "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg"
-      ,"sign": "微电商达人"
-    }]
+
   }
 }

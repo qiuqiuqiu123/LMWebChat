@@ -17,14 +17,16 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">查找好友</label>
 						<div class="layui-input-block">
-							<input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入好友id或者昵称" class="layui-input">
+							<input type="text" name="title" lay-verify="title" id="inputText" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
+
 						</div>
 					</div>
 				</div>
 				<div class="layui-col-md4">
 					<div class="layui-form-item" style="margin-left: -30%;">
 						<div class="layui-input-block">
-							<button class="layui-btn" lay-submit lay-filter="*">添加好友</button>
+							<button class="layui-btn site-demo-layim" id="add">添加好友</button>
+							<button class="layui-btn" lay-submit id="creatGroup">创建群聊</button>
 						</div>
 					</div>
 				</div>
@@ -33,17 +35,141 @@
 		</div>
 
 		<script src="../../../../layui.js"></script>
-		<!-- 	<script>
+		<script>
+			var path='https://pope.utools.club'
 			layui.use(['layim', 'laypage','layer'], function() {
 				var layim = layui.layim,
-					layer = layui.layer,
-					laytpl = layui.laytpl,
-					$ = layui.jquery,
-					laypage = layui.laypage;
+						layer = layui.layer,
+						laytpl = layui.laytpl,
+
+						laypage = layui.laypage;
+				var $ = layui.jquery;
+
+				$("#add").click(function () {
+					//实际使用时数据由动态获得
+					console.log("hhh")
+					var text=document.getElementById("inputText").value
+					console.log(text)
+					if(text!="") {
+						var id;
+						var name;
+						$.ajax({
+							type: "GET",
+							url: path + '/user/userInfo',
+							data: {
+								email:text
+							},
+							success: function (data) {
+								console.log(data)
+								if(data.code==500) {
+									alert("不存在该用户")
+
+								}else {
+									id = data.data.id
+									name = data.data.username
+									layim.add({
+										type: 'friend'
+										,
+										username: name
+										,
+										avatar: '//tva1.sinaimg.cn/crop.0.0.720.720.180/005JKVuPjw8ers4osyzhaj30k00k075e.jpg'
+										,
+										submit: function (group, remark, index) {
+											$.ajax({
+												type: "POST",
+												url: path + '/friendship/makeFriend',
+												data: {
+													userId: 1,
+													friendId: id
+												},
+												async: true,
+												dataType: "json",
+												success: function (data) {
+													console.log(data)
+												}
+											});
+											layer.msg('好友申请已发送，请等待对方确认', {
+												icon: 1
+												, shade: 0.5
+											}, function () {
+												layer.close(index);
+											});
+
+											//通知对方
+											/*
+                                    $.post('/im-applyFriend/', {
+                                      uid: info.uid
+                                      ,from_group: group
+                                      ,remark: remark
+                                    }, function(res){
+                                      if(res.status != 0){
+                                        return layer.msg(res.msg);
+                                      }
+                                      layer.msg('好友申请已发送，请等待对方确认', {
+                                        icon: 1
+                                        ,shade: 0.5
+                                      }, function(){
+                                        layer.close(index);
+                                      });
+                                    });
+                                    */
+										}
+									});
+								}
+							}
+
+
+						});
+
+					}else {
+						alert("请输入邮箱")
+					}
+				})
+				$("#creatGroup").click(function () {
+					layer.open({
+						id: 1,
+						type: 1,
+						title: '请输入群聊名称',
+						async: true,
+						style: 'width:80%;height:auto;',
+						content: "<div style='display:flex;justify-content:center;'><input id='area' ></div>",
+						btn: ['创建', '取消'],
+						yes: function (index, layero) {
+							//获取输入框里面的值
+							var closeContent = $("#area").val();
+							if (closeContent) {
+								console.log(closeContent);
+								$.ajax({
+									type: "post",
+									url: path + '/Group/createGroup',
+									data: {
+										groupName: closeContent,
+										groupOwner:1
+									},
+									success: function (data) {
+										console.log(data)
+
+									}
+								})
+								layer.close(index);
+							} else {
+								alert("请输入名称")
+							}
+
+						},
+						no: function (index, layero) {
+							layer.close(index);
+						}
+					})
+
+				})
+
+
+
 
 				//一些添加好友请求之类的交互参见文档
 
 			});
-		</script> -->
+		</script>
 	</body>
 </html>

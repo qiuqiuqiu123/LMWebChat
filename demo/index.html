@@ -10,6 +10,14 @@
 			html {
 				background-color: #333;
 			}
+			/*css代码*/
+			#right_menu{background: rgba(100,50,30,0.3);
+				border-radius: 5px;
+				display: none;
+				width: 150px;
+				height: 150px;
+				position: absolute;
+			}
 		</style>
 	</head>
 	<body>
@@ -21,8 +29,9 @@
 				alert('请部署到localhost上查看该演示');
 			}
 
-			layui.use('layim', function(layim) {
-
+			var path='https://pope.utools.club'
+			layui.use(['layim','layer'], function(layim) {
+				var layer=layui.layer
 				//演示自动回复
 				var autoReplay = [
 					'您好，我现在有事不在，一会再和您联系。',
@@ -35,14 +44,19 @@
 					'face[黑线]  你慢慢说，别急……',
 					'(*^__^*) face[嘻嘻] ，是贤心吗？'
 				];
+				var $=layui.jquery
 
+				var layimChangeTo;
 				//基础配置
 				layim.config({
 
 					//初始化接口
 					init: {
-						url: 'json/getList.json',
-						data: {}
+						url:
+								path+'/friendship/userRelationShip'
+						,data: {
+							userId:1
+						}
 					}
 
 					//查看群员接口
@@ -193,10 +207,63 @@
 
 				});
 
+				function  checkGroupMembers(res){
+
+					var groupId = layimChangeTo.id;
+					console.log(res);
+					console.log(groupId)
+
+					var membersList = $(".layim-members-list");
+					membersList.empty()
+					// groupId为群组编号
+					// var html = [
+					//     '<div groupid="'+groupId+'" mark="1" class="handleGroupUser" style="float:left;margin:12px 31px;border:1px dashed #ccc;border-radius:48px;width:48px;height:48px;cursor:pointer;">',
+					//     '<img src="http://tp1.sinaimg.cn/1571889140/180/40030060651/1" class="icon iconfont" style="font-size:28px;line-height:48px;padding-left:10px;">&#xed24;</img>',
+					//     '</div>',
+					//     '<div groupid="'+groupId+'" mark="2" class="handleGroupUser" style="float:left;margin:12px 31px;border:1px dashed #ccc;border-radius:48px;width:48px;height:48px;cursor:pointer;">',
+					//     '<img src="http://tp1.sinaimg.cn/1571889140/180/40030060651/1" class="icon iconfont" style="font-size:28px;line-height:48px;padding-left:10px;">&#xed25;</img>',
+					//     '</div>'
+					// ].join('');
+
+					var getMembers=''
+					var num
+					$.ajax({
+						type: "GET",
+						url: path + '/GroupMember/groupMembers',
+						data: {
+							groupId: groupId
+						},
+						success: function (data) {
+							console.log(data)
+							num=data.data.num
+							console.log(num)
+							for(var i=0;i<data.data.list.length;i++)
+							{
+								getMembers=getMembers+'<li data-uid="'+data.data.list[i].id+'"><a href="javascript:;"><img src="http://tp1.sinaimg.cn/1571889140/180/40030060651/1"><cite>'+data.data.list[i].username+'</cite></a></li>'
+							}
+							var a='<li><div groupid="'+groupId+'" mark="1" class="handleGroupUser"><img src="http://tp1.sinaimg.cn/1571889140/180/40030060651/1"></div></li><li><div groupid="'+groupId+'" mark="2" class="handleGroupUser"><img src="http://tp1.sinaimg.cn/1571889140/180/40030060651/1"> </div></li>'
+
+							membersList.prepend(getMembers);
+							membersList.prepend(a)
+							console.log(getMembers)
+
+							var membersCount=$(".layim-chat-members")
+							membersCount.empty()
+							membersCount.append('<span>'+num+'人</span>')
+
+							console.log(membersList)
+							console.log(membersCount.innerHTML)
+
+						}
+					})
+					// 在群员列表最前面添加元素
+
+
+
+				}
 				//监听查看群员
 				layim.on('members', function(data) {
-					data.list[0].username="123";
-					console.log(data);
+					checkGroupMembers(res)
 				});
 
 				//监听聊天窗口的切换
@@ -216,6 +283,390 @@
 						});
 					}
 				});
+				/* 处理群聊群员 */
+				$('body').on('click', '.handleGroupUser', function(e){
+					// 群组编号（初始化图标时已经绑定）
+					var groupId = $(this).attr("groupid");
+					// 操作标识（初始化图标时已经绑定）
+					var mark = $(this).attr("mark");
+					var title;
+					var content
+					if(mark==1){
+						title = '添加成员';
+						$.ajax({
+							type: "GET",
+							url: path + '/friendship/allFriends',
+							data: {
+								userId: 1
+							},
+							success: function (data) {
+								console.log(data)
+								var temp=''
+								for (var i = 0; i < data.data.length; i++)
+								{
+									temp=temp+'<tr><td><input type="checkbox" name="" value="'+data.data[i].friendId+'" lay-skin="primary"></td><td>'+data.data[i].nickname+'</td></tr>'
+								}
+
+								content='<div id="check">\n' +
+										'  <table class="layui-table">\n' +
+										'    <colgroup>\n' +
+										'      <col width="50">\n' +
+										'      <col width="150">\n' +
+										'      <col width="150">\n' +
+										'      <col width="200">\n' +
+										'      <col>\n' +
+										'    </colgroup>\n' +
+										'    <thead>\n' +
+										'      <tr>\n' +
+										'        <th>选择</th>\n' +
+										'        <th>好友</th>\n' +
+										'      </tr> \n' +
+										'    </thead>\n' +
+										'    <tbody>\n' +
+										temp+
+										'    </tbody>\n' +
+										'  </table>\n' +
+										'</div>'
+								layer.open({
+									type: 0 //此处以iframe举例
+									,title: title
+									// ,area: ['390px', '260px']
+									,shade: 0.8
+									,maxmin: true
+									,offset: ['20%','30%']
+									,content: content
+									,btn: ['发送请求', '取消'] //只是为了演示
+									,yes: function(index, layero){
+										var list=[]
+										$("input[type='checkbox']:checked").each(function(i){
+											console.log($(this).val())
+											list.push(parseInt($(this).val()))
+										})
+										console.log(list)
+										$.ajax({
+											type: "POST",
+											url: path + '/GroupMember/groupInvite',
+											traditional:true,
+											data: {
+												groupId:groupId,
+												inviterId:1,
+												inviteeIds:list
+											},
+											success: function (data) {
+												console.log(data)
+											}
+										})
+										console.log("hhhh")
+										layer.close(index);
+										layer.load(2, {time: 10*1000});
+									}
+									,btn2: function(){
+										layer.closeAll(e)
+
+									}
+									,zIndex: layer.zIndex //重点1
+									,success: function(layero){
+										var btn = layero.find('.layui-layer-btn')
+
+									}
+								});
+							}
+						})
+
+					}else{
+						title = '删除成员';
+						$.ajax({
+							type: "GET",
+							url: path + '/GroupMember/groupMembers',
+							data: {
+								groupId: groupId
+							},
+							success: function (data) {
+								console.log(data)
+								var temp=''
+								var groupOwner=data.data.list[0].id
+								//////////id,在此加判断 用户id是否在群主id
+								for (var i = 0; i < data.data.list.length; i++)
+								{
+									temp=temp+'<tr><td><input type="checkbox" name="" value="'+data.data.list[i].id+'" lay-skin="primary"></td><td>'+data.data.list[i].username+'</td></tr>'
+								}
+								console.log(temp)
+								content='<div id="check">\n' +
+										'  <table class="layui-table">\n' +
+										'    <colgroup>\n' +
+										'      <col width="50">\n' +
+										'      <col width="150">\n' +
+										'      <col width="150">\n' +
+										'      <col width="200">\n' +
+										'      <col>\n' +
+										'    </colgroup>\n' +
+										'    <thead>\n' +
+										'      <tr>\n' +
+										'        <th>选择</th>\n' +
+										'        <th>好友</th>\n' +
+										'      </tr> \n' +
+										'    </thead>\n' +
+										'    <tbody>\n' +
+										temp+
+										'    </tbody>\n' +
+										'  </table>\n' +
+										'</div>'
+								layer.open({
+									type: 0 //此处以iframe举例
+									,title: title
+									// ,area: ['390px', '260px']
+									,shade: 0.8
+									,maxmin: true
+									,offset: ['20%','30%']
+									,content: content
+									,btn: ['发送请求', '取消'] //只是为了演示
+									,yes: function(index, layero){
+										var list=[]
+										$("input[type='checkbox']:checked").each(function(i){
+											console.log($(this).val())
+											list.push(parseInt($(this).val()))
+										})
+										console.log(list)
+										$.ajax({
+											type: "delete",
+											url: path + '/GroupMember/groupMember',
+											traditional:true,
+											data: {
+												groupId:groupId,
+												groupOwner:groupOwner,
+												memIds:list
+											},
+											success: function (data) {
+												console.log(data)
+												checkGroupMembers()
+											}
+										})
+										console.log("hhhh")
+										layer.close(index);
+										layer.load(2, {time: 10*1000});
+									}
+									,btn2: function(){
+										layer.closeAll(e)
+
+									}
+									,zIndex: layer.zIndex //重点1
+									,success: function(layero){
+										var btn = layero.find('.layui-layer-btn')
+
+									}
+								});
+							}
+						})
+
+					}
+
+				});
+				// 阻止浏览器默认右键点击事件
+				document.oncontextmenu = function() {
+					return false;
+				}
+// 单击聊天主界面事件
+				$('body').on('click', '.layui-layim', function(e){
+					emptyTips();
+				});
+// 右击聊天主界面事件
+				$('body').on('mousedown', '.layui-layim', function(e){
+					emptyTips();
+				});
+				/* 监听鼠标滚轮事件 */
+				$('body').on('mousewheel DOMMouseScroll', '.layim-tab-content', function(e){
+					emptyTips();
+				});
+				/* 绑定好友右击事件 */
+				$('body').on('mousedown', '.layim-list-friend li ul li', function(e){
+					// 清空所有右击弹框
+					emptyTips();
+					if(3 != e.which) {
+						return;
+					}
+					// 不再派发事件
+					e.stopPropagation();
+
+					var othis = $(this);
+					if (othis.hasClass('layim-null')) return;
+
+					// 移除所有选中的样式
+					$('.layim-list-friend li ul li').removeAttr("style","");
+					// 标注为选中
+					othis.css({'background-color':'rgba(0,0,0,.05)'});
+
+
+					var mineId = $(this)[0].id.replace(/[^0-9]/ig,"");
+					console.log(mineId)
+					var uid = Date.now().toString(36);
+					var space_icon = '&nbsp;&nbsp;';
+					var space_text = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+					var html = [
+						'<ul id="contextmenu_'+uid + '" data-id="'+mineId+'" data-index="'+mineId+'" data-mold="1">',
+						'<li data-type="menuDeleteFriend" data-id="'+mineId+'">'+space_text+'删除好友</li>',
+						'</ul>'
+					].join('');
+
+					layer.tips(html, othis, {
+						tips: 1
+						,time: 0
+						,shift: 5
+						,fix: true
+						,skin: 'ayui-box layui-layim-contextmenu'
+						,success: function(layero){
+							var liCount = (html.split('</li>')).length;
+							var stopmp = function (e) { stope(e); };
+							layero.off('mousedowm',stopmp).on('mousedowm',stopmp);
+							var layerobj = $('#contextmenu_'+uid).parents('.layui-layim-contextmenu');
+							// 移动弹框位置
+							var top = layerobj.css('top').toLowerCase().replace('px','');
+							var left = layerobj.css('left').toLowerCase().replace('px','');
+							top = getTipTop(1, top, liCount);
+							left = 30 + parseInt(left);
+							layerobj.css({'width':'150px', 'left':left+'px', 'top':top+'px'});
+							$('.layui-layim-contextmenu li').css({'padding-left':'18px'});
+						}
+					});
+				});
+
+// 清空所有右击弹框
+				var emptyTips = function () {
+					// 移除所有好友选中的样式
+					$('.layim-list-friend li ul li').removeAttr("style", "");
+					// 移除所有群组选中的样式
+					$('.layim-list-group li').removeAttr("style","");
+					// 关闭右键菜单
+					layer.closeAll('tips');
+				};
+
+// 获取窗口的文档显示区的高度
+				var currentHeight = getViewSizeWithScrollbar();
+				function getViewSizeWithScrollbar(){
+					var clientHeight = 0;
+					if(window.innerWidth){
+						clientHeight = window.innerHeight;
+					}else if(document.documentElement.offsetWidth == document.documentElement.clientWidth){
+						clientHeight = document.documentElement.offsetHeight;
+					}else{
+						clientHeight = document.documentElement.clientHeight + getScrollWith();
+					}
+					clientHeight = clientHeight-180;
+					return clientHeight;
+				}
+
+				/**
+				 *计算tip定位的高度
+				 * @param type 类型(1好友、群组，2分组)
+				 * @param top 原弹框高度
+				 * @param liCount 弹框层中li数量
+				 */
+				var getTipTop = function (type, top, liCount) {
+					liCount--;
+					if(top > (currentHeight-45*liCount)){
+						top = parseInt(top) - 45;
+					}else{
+						if(type == 1){
+							top = parseInt(top) + 30*liCount - 10;
+						}else{
+							top = parseInt(top) + 30*(liCount - 1);
+						}
+					}
+					return top;
+				};
+
+
+				/* 绑定群聊右击事件 */
+				$('body').on('mousedown', '.layim-list-group li', function(e) {
+					// 清空所有右击弹框
+					emptyTips();
+					if (3 != e.which) {
+						return;
+					}
+					// 不再派发事件
+					e.stopPropagation();
+
+					var othis = $(this);
+					if (othis.hasClass('layim-null')) return;
+
+					// 移除所有选中的样式
+					$('.layim-list-group li').removeAttr("style", "");
+					// 标注为选中
+					othis.css({'background-color': 'rgba(0,0,0,.05)'});
+
+					var mineId = $(this)[0].id.replace(/[^0-9]/ig,"");
+					console.log(mineId)
+					var uid = Date.now().toString(36);
+					var space_icon = '&nbsp;&nbsp;';
+					var space_text = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+					var html = [
+						'<ul id="contextmenu_' + uid + '" data-id="' + mineId + '" data-index="' + mineId + '" data-mold="2">',
+						'<li data-type="menuSecede" data-id="'+mineId+'">' + space_text + '退出该群</li></ul>',
+					].join('');
+					layer.tips(html, othis, {
+						tips: 1
+						, time: 0
+						, shift: 5
+						, fix: true
+						, skin: 'ayui-box layui-layim-contextmenu'
+						, success: function (layero) {
+							var liCount = (html.split('</li>')).length;
+							var stopmp = function (e) {
+								stope(e);
+							};
+							layero.off('mousedowm', stopmp).on('mousedowm', stopmp);
+							var layerobj = $('#contextmenu_' + uid).parents('.layui-layim-contextmenu');
+							// 移动弹框位置
+							var top = layerobj.css('top').toLowerCase().replace('px', '');
+							var left = layerobj.css('left').toLowerCase().replace('px', '');
+							top = getTipTop(1, top, liCount);
+							left = 30 + parseInt(left);
+							layerobj.css({'width': '150px', 'left': left + 'px', 'top': top + 'px'});
+							$('.layui-layim-contextmenu li').css({'padding-left': '18px'});
+						}
+					});
+				})
+// 绑定右击菜单中选项的点击事件
+				var $ = layui.jquery, active = {
+					menuDeleteFriend:function (e) {
+						console.log($(this).context.dataset.id)
+						var friendId=$(this).context.dataset.id
+						$.ajax({
+							type: "delete",
+							url: path + '/friendship/delFriend',
+							data: {
+								userId: 1,
+								friendId:friendId
+							},
+							success: function (data) {
+								console.log(data)
+								location.reload()
+							}
+						})
+					}
+					,menuSecede:function (e) {
+						console.log($(this).context.dataset.id)
+						var groupId=$(this).context.dataset.id
+						$.ajax({
+							type: "delete",
+							url: path + '/GroupMember/exitGroup',
+							data: {
+								userId: 1,
+								groupId:groupId
+							},
+							success: function (data) {
+								console.log(data)
+								location.reload()
+							}
+						})
+					}
+				};
+				$('body').on('click', '.layui-layer-tips li', function(e){
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+					// 清空所有右击弹框
+					emptyTips();
+				});
+
 
 
 
