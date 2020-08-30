@@ -28,8 +28,11 @@
 			if (!/^http(s*):\/\//.test(location.href)) {
 				alert('请部署到localhost上查看该演示');
 			}
-
-			var path='https://pope.utools.club'
+			
+			var userId = sessionStorage.getItem("id");	
+			var WebStr = 'ws://qiuqiuqiu.utools.club/' + userId + '/123';
+			webSocket = new WebSocket("ws://qiuqiuqiu.utools.club/websocket/1/123");
+			var path='https://qiuqiuqiu.utools.club'
 			layui.use(['layim','layer'], function(layim) {
 				var layer=layui.layer
 				//演示自动回复
@@ -53,7 +56,7 @@
 					//初始化接口
 					init: {
 						url:
-								path+'/friendship/userRelationShip'
+							path+'/friendship/userRelationShip'
 						,data: {
 							userId:1
 						}
@@ -128,7 +131,7 @@
 						insert('[pre class=layui-code]' + text + '[/pre]'); //将内容插入到编辑器
 					});
 				});
-				webSocket = new WebSocket("ws://qiuqiuqiu.utools.club/websocket/123456/123");
+				
 
 				webSocket.onmessage = function(evt) {
 					var received_msg = evt.data;

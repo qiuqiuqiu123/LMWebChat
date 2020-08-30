@@ -176,11 +176,12 @@
 				dataType:'json',
 				data:$('.loginForm form').serialize(),
 				contentType:'application/x-www-form-urlencoded',
-				success:function (data) {
+				success:function (data,status,xhr) {
 					layer.close(loginLoadIndex);
 					console.log(data);
 					if(data.code == 200){
-						//window.location.href = './index.html';//跳转本地界面的url
+						sessionStorage.setItem("id", data.data.id);
+						window.location.href = './index.html';//跳转本地界面的url
 					}else{
 						$('#loginBtn').val("登录");
 						layer.alert('用户名或者密码错误');
