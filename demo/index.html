@@ -31,7 +31,7 @@
 				alert('请部署到localhost上查看该演示');
 			}
 
-			// var userId = sessionStorage.getItem("id");	
+			// var userId = sessionStorage.getItem("id");
 
 			layui.use(['layim', 'layer'], function(layim) {
 				var layer = layui.layer
@@ -470,7 +470,7 @@
 											traditional: true,
 											data: {
 												groupId: groupId,
-												inviterId: 1,
+												inviterId: userId,
 												inviteeIds: list
 											},
 											success: function(data) {
@@ -510,81 +510,85 @@
 								var temp = ''
 								var groupOwner = data.data.list[0].id
 								//////////id,在此加判断 用户id是否在群主id
-								for (var i = 0; i < data.data.list.length; i++) {
-									temp = temp + '<tr><td><input type="checkbox" name="" value="' + data.data.list[i].id +
-										'" lay-skin="primary"></td><td>' + data.data.list[i].username + '</td></tr>'
-								}
-								console.log(temp)
-								content = '<div id="check">\n' +
-									'  <table class="layui-table">\n' +
-									'    <colgroup>\n' +
-									'      <col width="50">\n' +
-									'      <col width="150">\n' +
-									'      <col width="150">\n' +
-									'      <col width="200">\n' +
-									'      <col>\n' +
-									'    </colgroup>\n' +
-									'    <thead>\n' +
-									'      <tr>\n' +
-									'        <th>选择</th>\n' +
-									'        <th>好友</th>\n' +
-									'      </tr> \n' +
-									'    </thead>\n' +
-									'    <tbody>\n' +
-									temp +
-									'    </tbody>\n' +
-									'  </table>\n' +
-									'</div>'
-								layer.open({
-									type: 0 //此处以iframe举例
+								if(userId==groupOwner) {
+									for (var i = 0; i < data.data.list.length; i++) {
+										temp = temp + '<tr><td><input type="checkbox" name="" value="' + data.data.list[i].id +
+												'" lay-skin="primary"></td><td>' + data.data.list[i].username + '</td></tr>'
+									}
+									console.log(temp)
+									content = '<div id="check">\n' +
+											'  <table class="layui-table">\n' +
+											'    <colgroup>\n' +
+											'      <col width="50">\n' +
+											'      <col width="150">\n' +
+											'      <col width="150">\n' +
+											'      <col width="200">\n' +
+											'      <col>\n' +
+											'    </colgroup>\n' +
+											'    <thead>\n' +
+											'      <tr>\n' +
+											'        <th>选择</th>\n' +
+											'        <th>好友</th>\n' +
+											'      </tr> \n' +
+											'    </thead>\n' +
+											'    <tbody>\n' +
+											temp +
+											'    </tbody>\n' +
+											'  </table>\n' +
+											'</div>'
+									layer.open({
+										type: 0 //此处以iframe举例
 										,
-									title: title
+										title: title
 										// ,area: ['390px', '260px']
 										,
-									shade: 0.8,
-									maxmin: true,
-									offset: ['20%', '30%'],
-									content: content,
-									btn: ['发送请求', '取消'] //只是为了演示
+										shade: 0.8,
+										maxmin: true,
+										offset: ['20%', '30%'],
+										content: content,
+										btn: ['发送请求', '取消'] //只是为了演示
 										,
-									yes: function(index, layero) {
-										var list = []
-										$("input[type='checkbox']:checked").each(function(i) {
-											console.log($(this).val())
-											list.push(parseInt($(this).val()))
-										})
-										console.log(list)
-										$.ajax({
-											type: "delete",
-											url: path + '/GroupMember/groupMember',
-											traditional: true,
-											data: {
-												groupId: groupId,
-												groupOwner: groupOwner,
-												memIds: list
-											},
-											success: function(data) {
-												console.log(data)
-												checkGroupMembers()
-											}
-										})
-										console.log("hhhh")
-										layer.close(index);
-										layer.load(2, {
-											time: 10 * 1000
-										});
-									},
-									btn2: function() {
-										layer.closeAll(e)
+										yes: function (index, layero) {
+											var list = []
+											$("input[type='checkbox']:checked").each(function (i) {
+												console.log($(this).val())
+												list.push(parseInt($(this).val()))
+											})
+											console.log(list)
+											$.ajax({
+												type: "delete",
+												url: path + '/GroupMember/groupMember',
+												traditional: true,
+												data: {
+													groupId: groupId,
+													groupOwner: groupOwner,
+													memIds: list
+												},
+												success: function (data) {
+													console.log(data)
+													checkGroupMembers()
+												}
+											})
+											console.log("hhhh")
+											layer.close(index);
+											layer.load(2, {
+												time: 10 * 1000
+											});
+										},
+										btn2: function () {
+											layer.closeAll(e)
 
-									},
-									zIndex: layer.zIndex //重点1
+										},
+										zIndex: layer.zIndex //重点1
 										,
-									success: function(layero) {
-										var btn = layero.find('.layui-layer-btn')
+										success: function (layero) {
+											var btn = layero.find('.layui-layer-btn')
 
-									}
-								});
+										}
+									});
+								}else{
+									alert("您不是群主，不可进行该操作")
+								}
 							}
 						})
 
