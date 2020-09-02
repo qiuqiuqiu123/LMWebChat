@@ -104,12 +104,12 @@
 				webSocket.onopen = function() {
 					window.setInterval(function() { //每隔5秒钟发送一次心跳，避免websocket连接因超时而自动断开
 						var ping = {
-							"type": 1,
+							"type": 0,
 							"senderId": 0,
 							"senderName": "1",
 							"receiverId": 0,
 							"receiverName": "1",
-							"content": "1",
+							"content": "这是一个心跳消息",
 							"time": Date.now()
 						};
 						console.log(JSON.stringify(ping));
@@ -124,115 +124,161 @@
 					var obj1 = JSON.parse(received_msg);
 					console.log("可以解析成json:" + obj1.type);
 					var obj2 = {};
-					switch (obj1.type) {
-						case 1:
-							obj2 = {
-								username: obj1.senderName,
-								avatar: "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg",
-								id: obj1.senderId,
-								type: "friend",
-								content: obj1.content
-							}
-							layim.getMessage(obj2);
-							break;
-						case 2:
-							obj2 = {
-								username: obj1.senderName,
-								avatar: "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg",
-								id: obj1.receiverId,
-								type: "group",
-								content: obj1.content
-							}
-							layim.getMessage(obj2);
-							break;
-						case 3:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr, //这里content是一个普通的String
-								btn: ['确定添加', '残忍拒绝'] //只是为了演示
-									,
-								yes: function() {
-									$.ajax({
-										type: "POST",
-										url: path + '/friendship/makeFriendRecv',
-										data: {
-											userId: userId,
-											friendId: obj1.senderId,
-											agreement:true
-										},
-										async: true,
-										dataType: "json",
-										success: function (data) {
-											console.log(data);
-											location.reload();
-											layer.closeAll();
-										}
-									});
-								},
-								btn2: function() {
-									$.ajax({
-										type: "POST",
-										url: path + '/friendship/makeFriendRecv',
-										data: {
-											userId: userId,
-											friendId: obj1.senderId,
-											agreement:false
-										},
-										async: true,
-										dataType: "json",
-										success: function (data) {
-											console.log(data);
-											location.reload();
-											layer.closeAll();
-										}
-									});
-								}
-							});
-							break;
-						case 4:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
-						case 5:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
-						case 6:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
-						case 7:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
-						case 8:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
-						case 9:
-							var str_contenr = obj1.content;
-							layer.open({
-								type: 0,
-								content: str_contenr //这里content是一个普通的String
-							});
-							break;
+					if(obj1.senderId == userId)
+					{
+						
 					}
+					else
+					{
+						switch (obj1.type) {
+							case 1:
+								obj2 = {
+									username: obj1.senderName,
+									avatar: "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg",
+									id: obj1.senderId,
+									type: "friend",
+									content: obj1.content
+								}
+								layim.getMessage(obj2);
+								break;
+							case 2:
+								obj2 = {
+									username: obj1.senderName,
+									avatar: "http://cdn.firstlinkapp.com/upload/2016_6/1465575923433_33812.jpg",
+									id: obj1.receiverId,
+									type: "group",
+									content: obj1.content
+								}
+								layim.getMessage(obj2);
+								break;
+							case 3:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr, //这里content是一个普通的String
+									btn: ['确定添加', '残忍拒绝'] //只是为了演示
+										,
+									yes: function() {
+										$.ajax({
+											type: "POST",
+											url: path + '/friendship/makeFriendRecv',
+											data: {
+												userId: userId,
+												friendId: obj1.senderId,
+												agreement:true
+											},
+											async: true,
+											dataType: "json",
+											success: function (data) {
+												console.log(data);
+												location.reload();
+												layer.closeAll();
+											}
+										});
+									},
+									btn2: function() {
+										$.ajax({
+											type: "POST",
+											url: path + '/friendship/makeFriendRecv',
+											data: {
+												userId: userId,
+												friendId: obj1.senderId,
+												agreement:false
+											},
+											async: true,
+											dataType: "json",
+											success: function (data) {
+												console.log(data);
+												location.reload();
+												layer.closeAll();
+											}
+										});
+									}
+								});
+								break;
+							case 4:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr //这里content是一个普通的String
+								});
+								break;
+							case 5:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr, //这里content是一个普通的String
+									btn: ['确定添加', '残忍拒绝'] //只是为了演示
+										,
+									yes: function() {
+										$.ajax({
+											type: "POST",
+											url: path + '/GroupMember/groupInviteRecv',
+											data: {
+												memId: userId,
+												groupId: obj1.senderId,
+												agreement:true
+											},
+											async: true,
+											dataType: "json",
+											success: function (data) {
+												console.log(data);
+												location.reload();
+												layer.closeAll();
+											}
+										});
+									},
+									btn2: function() {
+										$.ajax({
+											type: "POST",
+											url: path + '/GroupMember/groupInviteRecv',
+											data: {
+												userId: memId,
+												groupId: obj1.senderId,
+												agreement:false
+											},
+											async: true,
+											dataType: "json",
+											success: function (data) {
+												console.log(data);
+												location.reload();
+												layer.closeAll();
+											}
+										});
+									}
+								});
+								break;
+							case 6:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr //这里content是一个普通的String
+								});
+								break;
+							case 7:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr //这里content是一个普通的String
+								});
+								break;
+							case 8:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr //这里content是一个普通的String
+								});
+								break;
+							case 9:
+								var str_contenr = obj1.content;
+								layer.open({
+									type: 0,
+									content: str_contenr //这里content是一个普通的String
+								});
+								break;
+						}
+					}
+					
 				}
 
 				//监听layim建立就绪
@@ -342,18 +388,18 @@
 					var type = res.data.type;
 					layimChangeTo = res.data;
 					console.log(res.data)
-					if (type === 'friend') {
-						//模拟标注好友状态
-						//layim.setChatStatus('<span style="color:#FF5722;">在线</span>');
-					} else if (type === 'group') {
-						//模拟系统消息
-						layim.getMessage({
-							system: true,
-							id: res.data.id,
-							type: "group",
-							content: '模拟群员' + (Math.random() * 100 | 0) + '加入群聊'
-						});
-					}
+					// if (type === 'friend') {
+					// 	//模拟标注好友状态
+					// 	//layim.setChatStatus('<span style="color:#FF5722;">在线</span>');
+					// } else if (type === 'group') {
+					// 	//模拟系统消息
+					// 	layim.getMessage({
+					// 		system: true,
+					// 		id: res.data.id,
+					// 		type: "group",
+					// 		content: '模拟群员' + (Math.random() * 100 | 0) + '加入群聊'
+					// 	});
+					// }
 				});
 				/* 处理群聊群员 */
 				$('body').on('click', '.handleGroupUser', function(e) {
