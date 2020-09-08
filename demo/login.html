@@ -181,10 +181,12 @@
 					console.log(data);
 					if(data.code == 200){
 						sessionStorage.setItem("id", data.data.id);
+						//console.log(data.data.token);
+						sessionStorage.setItem("token", data.data.token);
 						window.location.href = './index.html';//跳转本地界面的url
 					}else{
 						$('#loginBtn').val("登录");
-						layer.alert('用户名或者密码错误');
+						layer.alert(data.msg);
 					}
 				},
 				error:function () {
@@ -224,7 +226,7 @@
 					}
 			    },
 			    error:function () {
-			        layer.alert("请检查网络连接！");
+			        layer.alert(data.msg);
 			    }
 			});
 		}
@@ -276,12 +278,12 @@
 									layer.close(registerLoadIndex);
 									initRegister();
 								}else{
-									layer.alert("请检查格式是否符合规范");
+									layer.alert(data.msg);
 								}
 						    },
 						    error:function () {
 						        layer.close(registerLoadIndex);
-						        layer.alert("请检查网络连接！");
+						        layer.alert(data.msg);
 								initRegister();
 						    }
 						});
@@ -321,12 +323,12 @@
 									layer.close(findPasswordLoadIndex);
 									initfindPassword();
 								}else{
-									layer.alert("请检查格式是否符合规范");
+									layer.alert(data.msg);
 								}
 						    },
 						    error:function () {
 						        layer.close(findPasswordLoadIndex);
-						        layer.alert("请检查网络连接！")
+						        layer.alert(data.msg)
 								initfindPassword();
 						    }
 						});
