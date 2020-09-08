@@ -37,6 +37,7 @@
 				var layer = layui.layer
 				//演示自动回复
 				var userId = sessionStorage.getItem("id");
+				var token=sessionStorage.getItem("token")
 				var WebStr = 'ws://localhost:9010/websocket/' + userId + '/123';
 				var path = 'https://localhost:9010';
 				var autoReplay = [
@@ -59,6 +60,9 @@
 					//初始化接口
 					init: {
 						url: path + '/friendship/userRelationShip',
+						headers: {
+							"authorization":token//此处放置请求到的用户token
+						},
 						data: {
 							userId: userId
 						}
@@ -68,6 +72,9 @@
 					,
 					members: {
 						url: 'json/getMembers.json',
+						headers: {
+							"authorization":token//此处放置请求到的用户token
+						},
 						data: {}
 					},
 
@@ -162,6 +169,9 @@
 										$.ajax({
 											type: "POST",
 											url: path + '/friendship/makeFriendRecv',
+											headers: {
+												"authorization":token//此处放置请求到的用户token
+											},
 											data: {
 												userId: userId,
 												friendId: obj1.senderId,
@@ -180,6 +190,9 @@
 										$.ajax({
 											type: "POST",
 											url: path + '/friendship/makeFriendRecv',
+											headers: {
+												"authorization":token//此处放置请求到的用户token
+											},
 											data: {
 												userId: userId,
 												friendId: obj1.senderId,
@@ -214,6 +227,9 @@
 										$.ajax({
 											type: "POST",
 											url: path + '/GroupMember/groupInviteRecv',
+											headers: {
+												"authorization":token//此处放置请求到的用户token
+											},
 											data: {
 												memId: userId,
 												groupId: obj1.senderId,
@@ -232,6 +248,9 @@
 										$.ajax({
 											type: "POST",
 											url: path + '/GroupMember/groupInviteRecv',
+											headers: {
+												"authorization":token//此处放置请求到的用户token
+											},
 											data: {
 												userId: memId,
 												groupId: obj1.senderId,
@@ -343,6 +362,9 @@
 					$.ajax({
 						type: "GET",
 						url: path + '/GroupMember/groupMembers',
+						headers: {
+							"authorization":token//此处放置请求到的用户token
+						},
 						data: {
 							groupId: groupId
 						},
@@ -414,6 +436,9 @@
 						$.ajax({
 							type: "GET",
 							url: path + '/friendship/allFriends',
+							headers: {
+								"authorization":token//此处放置请求到的用户token
+							},
 							data: {
 								userId: userId
 							},
@@ -467,6 +492,9 @@
 										$.ajax({
 											type: "POST",
 											url: path + '/GroupMember/groupInvite',
+											headers: {
+												"authorization":token//此处放置请求到的用户token
+											},
 											traditional: true,
 											data: {
 												groupId: groupId,
@@ -502,6 +530,9 @@
 						$.ajax({
 							type: "GET",
 							url: path + '/GroupMember/groupMembers',
+							headers: {
+								"authorization":token//此处放置请求到的用户token
+							},
 							data: {
 								groupId: groupId
 							},
@@ -558,6 +589,9 @@
 											$.ajax({
 												type: "delete",
 												url: path + '/GroupMember/groupMember',
+												headers: {
+													"authorization":token//此处放置请求到的用户token
+												},
 												traditional: true,
 												data: {
 													groupId: groupId,
@@ -787,6 +821,9 @@
 							$.ajax({
 								type: "delete",
 								url: path + '/friendship/delFriend',
+								headers: {
+									"authorization":token//此处放置请求到的用户token
+								},
 								data: {
 									userId: userId,
 									friendId: friendId
@@ -803,6 +840,9 @@
 							$.ajax({
 								type: "delete",
 								url: path + '/GroupMember/exitGroup',
+								headers: {
+									"authorization":token//此处放置请求到的用户token
+								},
 								data: {
 									userId: userId,
 									groupId: groupId
